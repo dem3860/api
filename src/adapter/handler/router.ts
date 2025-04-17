@@ -4,11 +4,8 @@ import { cors } from "hono/cors";
 import { PrismaClient } from "@prisma/client";
 import { AppType } from "../../type.js";
 import { authRouter } from "./auth/routes.js";
-import { eventRouter } from "./event/routes.js";
 import { AuthRepository } from "../database/repository/auth.js";
-import { EventRepository } from "../database/repository/event.js";
 import { AuthInteractor } from "../../useCase/interactor/auth.js";
-import { EventInteractor } from "../../useCase/interactor/event.js";
 import {
   authMiddleware,
   adminMiddleware,
@@ -40,7 +37,6 @@ app.openAPIRegistry.registerComponent("securitySchemes", "Bearer", {
 app.use("*", async (c, next) => {
   c.set("deps", {
     authUseCase: new AuthInteractor(new AuthRepository(prisma)),
-    eventUseCase: new EventInteractor(new EventRepository()),
     adminUserUseCase: new AdminUserInteractor(new AdminUserRepository(prisma)),
   });
   await next();
@@ -51,7 +47,6 @@ app.use("/user/*", authMiddleware, userMiddleware);
 
 app.get("/", (c) => c.text("Hello Hono!"));
 app.route("/auth/", authRouter);
-app.route("/event", eventRouter);
 app.route("/admin/user", adminUserRouter);
 
 // Swagger UI

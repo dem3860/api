@@ -9,7 +9,6 @@ interface CustomJwtPayload extends JwtPayload {
   exp: number;
 }
 
-// authMiddlewareのパラメーターにContext型を指定
 export const authMiddleware = async (c: Context, next: () => Promise<void>) => {
   const token = c.req.header("Authorization")?.replace("Bearer ", "");
 
@@ -39,6 +38,7 @@ export const adminMiddleware = async (
   if (user.role !== "ADMIN") {
     return c.json({ message: "Forbidden: Admin access required" }, 403);
   }
+  console.log("Admin access granted");
   return next();
 };
 
